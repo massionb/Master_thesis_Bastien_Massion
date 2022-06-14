@@ -173,7 +173,7 @@ def respectOfConstrains(reconstructed_matrix, in_range = True, add_to_one = True
     return out_of_range, not_adding_to_one, not_half_on_diagonal
 
 
-def errorMetrics(p_matrix, p_bar_test, test_selected_omega, test_confrontation_matrix, completion_method, in_range = True, add_to_one = True, diagonal_half = True, clipping = True):
+def errorMetrics(p_matrix, p_bar_test, test_selected_omega, test_confrontation_matrix, completion_method, in_range = True, add_to_one = True, diagonal_half = True, clipping = True, plot_sv = False):
     if p_bar_test is not None :
         rmse = RMSE(p_matrix, p_bar_test, test_selected_omega)
         wrmse = weigthedRMSE(p_matrix, p_bar_test, test_selected_omega, test_confrontation_matrix)
@@ -183,8 +183,9 @@ def errorMetrics(p_matrix, p_bar_test, test_selected_omega, test_confrontation_m
         wrmse = None
         print("WRMSE : no matrix to compare to")
     u, singular_values, v_t = singularValues(p_matrix)
-    u_centered, singular_values_centered, v_t_centered = singularValues(p_matrix - 0.5*np.ones(np.shape(p_matrix)))
-#    plotSingularValues(singular_values, singular_values_centered, completion_method, clipping)
+    if plot_sv == True:
+        u_centered, singular_values_centered, v_t_centered = singularValues(p_matrix - 0.5*np.ones(np.shape(p_matrix)))
+        plotSingularValues(singular_values, singular_values_centered, completion_method, clipping)
     p_matrix_respect = makeRespectConstraints(p_matrix)
     acc_mean, acc_std = matchesSimulations(p_matrix_respect, test_selected_omega, test_confrontation_matrix)
     acc_upper_bound, acc_known = simulationsUpperBound(test_selected_omega, test_confrontation_matrix)

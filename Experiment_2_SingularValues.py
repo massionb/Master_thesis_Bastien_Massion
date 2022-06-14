@@ -39,7 +39,8 @@ from Plotting_thesis import *
 
 ######## DATA SELECTION
 
-number_players = 50
+#number_players = 50
+number_players = 10
 testing_percentage = 30.0
 limit_dates = ['01/01/2013', '31/12/2013']
 sorting_criterion = "activity"

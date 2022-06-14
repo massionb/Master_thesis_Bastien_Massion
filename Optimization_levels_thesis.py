@@ -24,10 +24,7 @@ import time
 
 # OPTIMIZATION METHOD FOR LEVELS FORMULATION
     
-def createTensor(train_confrontation_tensor, method, estimator = "MAP", rating_model = ("uniform", None), in_range = False, add_to_one = False, diagonal_half = False, clipping = True):
-    if estimator != "MAP":
-        print("Define an estimator acceptable for creation formulation")
-        return
+def createTensor(train_confrontation_tensor, method, rating_model = ("uniform", None), in_range = False, add_to_one = False, diagonal_half = False, clipping = True):
     method_name = method[0]
     before_time = time.time()
     if method_name == "Eratings":

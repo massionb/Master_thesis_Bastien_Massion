@@ -90,7 +90,7 @@ def complete(p_bar_train, omega_train, train_confrontation_matrix, method, in_ra
 
 # Super slow, respects probability-range constraints, doesn't respect probability-sum constraints 
 def nuclearNormMinimization(p_bar_train):
-    p_matrix = NuclearNormMinimization(verbose = True).fit_transform(p_bar_train)
+    p_matrix = NuclearNormMinimization(verbose = False).fit_transform(p_bar_train)
     return p_matrix
 
 
@@ -98,13 +98,13 @@ def nuclearNormMinimization(p_bar_train):
 # Good without BiScaler normalization
 # Fast, respects probability-range constraints, doesn't respect probability-sum constraints 
 def softImpute(p_bar_train, tau = 5.0, max_iters = 100):
-    p_matrix = SoftImpute(verbose = True, shrinkage_value = tau, max_iters = max_iters).fit_transform(p_bar_train)
+    p_matrix = SoftImpute(verbose = False, shrinkage_value = tau, max_iters = max_iters).fit_transform(p_bar_train)
     return p_matrix
 
 
 # Fast, doesn't respect some probability-range constraints (sometimes badly), doesn't respect probability-sum constraints 
 def iterativeSVD(p_bar_train, imposed_rank = 2):
-    p_matrix = IterativeSVD(verbose = True, rank = imposed_rank, gradual_rank_increase = False).fit_transform(p_bar_train)
+    p_matrix = IterativeSVD(verbose = False, rank = imposed_rank, gradual_rank_increase = False).fit_transform(p_bar_train)
     return p_matrix
 
 
@@ -191,6 +191,7 @@ def create(train_confrontation_matrix, method, estimator = "MAP", probability_mo
         rank = method[1]
         p_matrix, u_factor_matrix, v_factor_matrix = MAPBMF(train_confrontation_matrix, rank, probability_model)
     else :
+        print("Method name: ", method_name)
         print("Define a correct creation method")
         return
     
@@ -238,7 +239,7 @@ def MAPNNM(train_confrontation_matrix, probability_model, tau_val = 5.0, max_ite
         obj = cp.Minimize(obj_nuclear_norm + tau_inv*(obj_log_likelihood + obj_log_prior))
     
     prob = cp.Problem(obj, constraints)
-    prob.solve(verbose=True, max_iters=max_iters)
+    prob.solve(verbose=False, max_iters=max_iters)
     obj_value = prob.value
     p_matrix = P.value
     return p_matrix

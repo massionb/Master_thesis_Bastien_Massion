@@ -36,10 +36,12 @@ def keepOnlyAllowedDates(data, header, limit_dates):
 
 # TRAINING AND TESTING SETS
 
-def divideTrainingAndTestingData(data, testing_percentage = 30.0):
+def divideTrainingAndTestingData(data, testing_percentage = 30.0, seed = None):
     n_data = len(data)
     limit_index = int(n_data*(100.0-testing_percentage)/100.0)
     arr = np.arange(n_data)
+    if seed != None:
+        np.random.seed(seed)
     np.random.shuffle(arr)
     data_indices = list(arr)
     train_data_indices = sorted(data_indices[:limit_index])
@@ -150,12 +152,12 @@ def selectingMatrix(matrix, n_size):
 
 # ALL DATA SELECTION PROCESS
     
-def selectingData(data, players, players_indices, header, testing_percentage = 30.0, sorting_criterion = "activity", number_players = None, limit_dates = None):
+def selectingData(data, players, players_indices, header, testing_percentage = 30.0, sorting_criterion = "activity", number_players = None, limit_dates = None, seed = None):
     if limit_dates != None :
         data = keepOnlyAllowedDates(data, header, limit_dates)
         
     # TRAINING AND TESTING SETS
-    train_data, test_data = divideTrainingAndTestingData(data, testing_percentage = testing_percentage)
+    train_data, test_data = divideTrainingAndTestingData(data, testing_percentage = testing_percentage, seed = seed)
     
     # CONFRONTATION STATS
     train_confrontation_matrix = createConfrontationMatrix(train_data, players, header)

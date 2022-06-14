@@ -36,7 +36,7 @@ def plotSingularValues(singular_values, singular_values_centered, completion_met
 #        label += ", " + str(parameters)
     plt.scatter(x_points, singular_values, label = label)
     plt.scatter(x_points, singular_values_centered, label = label + " (centered)")
-#    plt.legend(fontsize=30) #Ajouter une légende à la l'image
+    plt.legend(fontsize=20) #Ajouter une légende à la l'image
     plt.xlabel("$i^{th}$ biggest $\sigma$", fontsize=30) #Label pour l'axe des x
     plt.ylabel("$\sigma$", fontsize=30) #Label pour l'axe des x
     plt.tick_params(axis = 'both', which = 'both',labelsize = 30) #Taille des valeurs des axes
@@ -191,18 +191,18 @@ def plotVaryK(imposed_k, accuracy_percentages, rmse, wrmse, method):
     f.show() 
     
     
-def plotVaryB(imposed_b, accuracy_percentages, rmse, wrmse, probability_model, estimator):
+def plotVaryB(imposed_b, accuracy_percentages, rmse, wrmse, probability_model, estimators):
     if np.isnan(np.sum(rmse)) == True:
-        if estimator == None:
+        if estimators == None:
             f = plt.figure("Imposed b " + probability_model, figsize = (15,10)) 
             f.subplots_adjust(wspace=0.2, hspace=0.4)
             plt.rc('axes', titlesize=20)
             f.suptitle(probability_model, fontsize=30)
         else:
-            f = plt.figure("Imposed b " + probability_model+ estimator, figsize = (15,10)) 
+            f = plt.figure("Imposed b " + probability_model + ": train " + estimators[0] + ", test " + estimators[1], figsize = (15,10)) 
             f.subplots_adjust(wspace=0.2, hspace=0.4)
             plt.rc('axes', titlesize=20)
-            f.suptitle(probability_model + " "+estimator, fontsize=30)
+            f.suptitle(probability_model + ": train " + estimators[0] + ", test " + estimators[1], fontsize=30)
         
         a1 = f.add_subplot(1, 1, 1)
         a1.plot(imposed_b, accuracy_percentages[:,0], label = "no clip")
@@ -213,10 +213,10 @@ def plotVaryB(imposed_b, accuracy_percentages, rmse, wrmse, probability_model, e
         a1.tick_params(axis = 'both', which = 'both',labelsize = 30)
     
     else:
-        f = plt.figure("Imposed b " + probability_model+ estimator, figsize = (15,15)) 
+        f = plt.figure("Imposed b " + probability_model + ": train " + estimators[0] + ", test " + estimators[1], figsize = (15,15)) 
         f.subplots_adjust(wspace=0.2, hspace=0.4)
         plt.rc('axes', titlesize=20)
-        f.suptitle(probability_model +" "+ estimator, fontsize=30)
+        f.suptitle(probability_model + ": train " + estimators[0] + ", test " + estimators[1], fontsize=30)
     
         a1 = f.add_subplot(3, 1, 1)
         a1.plot(imposed_b, accuracy_percentages[:,0], label = "no clip")
@@ -240,7 +240,7 @@ def plotVaryB(imposed_b, accuracy_percentages, rmse, wrmse, probability_model, e
         a3.set_ylabel("WRMSE",fontsize=30)
         a3.tick_params(axis = 'both', which = 'both',labelsize = 30)
     
-    if estimator == None:
+    if estimators == None:
         lines_labels = [ax.get_legend_handles_labels() for ax in f.axes]
         lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
         f.legend(lines, labels, fontsize=30)
@@ -253,7 +253,7 @@ def plotVaryB(imposed_b, accuracy_percentages, rmse, wrmse, probability_model, e
         lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
         f.legend(lines, labels, fontsize=30)
     
-        f.savefig('ImposedB' + probability_model + estimator + '.png')
+        f.savefig('ImposedB' + probability_model + estimators[0] + estimators[1] + '.png')
         f.show()
     
     
@@ -289,21 +289,22 @@ def plotVaryS(imposed_s, accuracy_percentages, method):
     plt.show()
     
     
-def plotStdE(imposed_s, e_matrix, method):
+def plotStdE(imposed_values, e_matrix, method, imposed_parameter):
     e_matrix_mean = np.mean(e_matrix, axis=2).T
     e_matrix_sigma = np.std(e_matrix, axis=(1,2))
     
     plt.figure("Std E " + method, figsize = (10,8)) 
     plt.title(method, fontsize=30)
-    plt.plot(imposed_s, e_matrix_sigma)
+    plt.plot(imposed_values, e_matrix_sigma, label = imposed_parameter)
     plt.grid()
     plt.xscale('log')
     plt.yscale('log')
-    plt.xlabel("Imposed $s$", fontsize=30)
+    plt.xlabel("Imposed parameter, $\lambda s$ constant", fontsize=30)
     plt.ylabel("Standard deviation of $E$", fontsize=30)
     plt.tick_params(axis = 'both', which = 'both',labelsize = 30)
+    plt.legend(fontsize=30)
     plt.tight_layout()
-    plt.savefig('StdE' + method + '.png')
+    plt.savefig('StdE' + method + imposed_parameter + '.png')
     plt.show()
     
     return e_matrix_mean, e_matrix_sigma
@@ -312,13 +313,31 @@ def plotVariabilityRuns(runs_indices, accuracy, method):
     plt.figure("Variability", figsize = (20,15)) 
     plt.title("Variability of runs", fontsize=30)
     plt.grid()
-    plt.plot(runs_indices, accuracy[:,0], label = method + " no clip")
-    plt.plot(runs_indices, accuracy[:,1], label = method + " clip")
+    plt.scatter(runs_indices, accuracy[:,0], s= 300, label = method + " no clip")
+    plt.scatter(runs_indices, accuracy[:,1], s= 300, label = method + " clip")
+    plt.plot(runs_indices, accuracy[:,0])
+    plt.plot(runs_indices, accuracy[:,1])
     plt.legend(fontsize=30) #Ajouter une légende à la l'image
     plt.xlabel("Run index", fontsize=30) #Label pour l'axe des x
     plt.ylabel("Prediction accuracy", fontsize=30) #Label pour l'axe des x
     plt.tick_params(axis = 'both', which = 'both',labelsize = 30) #Taille des valeurs des axes
     plt.savefig('VariabilityAccuracy.png') #Sauvergarder l'image
+    plt.show() #Montrer l'image  
+
+
+def plotComparisonSeasons(seasons, accuracy, methods):
+    plt.figure("Comparison accuracy", figsize = (20,15)) 
+    plt.title("Accuracy over seasons", fontsize=30)
+    plt.grid()
+    n_seasons = len(accuracy[:,0])
+    for i in range(n_seasons):
+        plt.scatter(seasons, accuracy[i], s= 300, label = methods[i][0])
+        plt.plot(seasons, accuracy[i])
+    plt.legend(fontsize=30) #Ajouter une légende à la l'image
+    plt.xlabel("Season", fontsize=30) #Label pour l'axe des x
+    plt.ylabel("Prediction accuracy", fontsize=30) #Label pour l'axe des x
+    plt.tick_params(axis = 'both', which = 'both',labelsize = 30) #Taille des valeurs des axes
+    plt.savefig('ComparisonAccuracy.png') #Sauvergarder l'image
     plt.show() #Montrer l'image  
     
     

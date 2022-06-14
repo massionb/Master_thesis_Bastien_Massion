@@ -56,7 +56,7 @@ def createProbabilityMatrix(confrontation_matrix, estimator = "MAP", probability
             if ij_wins > 0 or ji_wins > 0:
                 if estimator == "MAP":
                     p_ij_bar = MAPEstimator(model_name, model_parameters, ij_wins, ji_wins)
-                elif estimator == "conditional_mean":
+                elif estimator == "CM":
                     p_ij_bar = conditionalMeanEstimator(model_name, model_parameters, ij_wins, ji_wins)
                 else:
                     print("Define a correct estimator")
